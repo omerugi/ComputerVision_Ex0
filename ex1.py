@@ -12,6 +12,9 @@ from typing import List
 import numpy as np
 from matplotlib import pyplot as plt
 import cv2.cv2 as cv2
+import sklearn
+from sklearn.cluster import KMeans
+from sklearn.metrics import mean_squared_error
 
 LOAD_GRAY_SCALE = 1
 LOAD_RGB = 2
@@ -42,6 +45,12 @@ def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
     else:
         image = cv2.imread(filename, 0)
         data = np.asarray(image, dtype=np.float32)
+    # Conver into np array
+
+    # normalize
+    # aaf = data - data.min()
+    # aad = data.max() - data.min()
+    # data = aaf/aad
 
     return data / 255
 
@@ -90,8 +99,8 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
     yiq_from_rgb = np.array([[0.299, 0.587, 0.114],
                              [0.59590059, -0.27455667, -0.32134392],
                              [0.21153661, -0.52273617, 0.31119955]])
-    OrigShape=imgYIQ.shape
-    return np.dot(imgYIQ.reshape(-1,3), np.linalg.inv(yiq_from_rgb).transpose()).reshape(OrigShape)
+    OrigShape = imgYIQ.shape
+    return np.dot(imgYIQ.reshape(-1, 3), np.linalg.inv(yiq_from_rgb).transpose()).reshape(OrigShape)
 
     pass
 
@@ -116,6 +125,8 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
         imgEq = cdf[img.astype('uint8')]
         histEq, bins2 = np.histogram(imgEq.flatten(), 256, [0, 256])
+
+
 
     else:
         img = transformRGB2YIQ(imgOrig)
@@ -218,34 +229,4 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
     return img_list, mse_list
 
     pass
-
-
-#imDisplay('/home/omerugi/PycharmProjects/Ex0/beach.jpg',1)
-
-#plt.imshow(transformRGB2YIQ(imReadAndConvert('/home/omerugi/PycharmProjects/Ex0/beach.jpg', 2)))
-#plt.show()
-
-#plt.imshow(transformYIQ2RGB(transformRGB2YIQ(imReadAndConvert('/home/omerugi/PycharmProjects/Ex0/beach.jpg', 2))))
-#plt.show()
-
-hsitogramEqualize(imReadAndConvert('/home/omerugi/PycharmProjects/Ex0/beach.jpg', 1))
-#imDisplay("/home/omerugi/PycharmProjects/Ex0/histEQ_RGB.png",2)
-
-#hsitogramEqualize(imReadAndConvert('/home/omerugi/PycharmProjects/Ex0/beach.jpg', 1))
-#imDisplay("/home/omerugi/PycharmProjects/Ex0/histEQ_GRAY.png",1)
-
-#quantizeImage(imReadAndConvert('/home/omerugi/PycharmProjects/Ex0/beach.jpg', 2), 4, 5)
-# imDisplay("/home/omerugi/PycharmProjects/Ex0/quant_GRAY.png",1)
-# image = cv2.imread('/home/omerugi/PycharmProjects/Ex0/quant_GRAY_q4_it5.png', 0)
-# data = np.asarray(image, dtype=np.float32)
-# plt.imshow(data, cmap='gray')
-# plt.show()
-
-#l1,l2= quantizeImage(imReadAndConvert('/home/omerugi/PycharmProjects/Ex0/beach.jpg', 2),4,5)
-
-# imDisplay("/home/omerugi/PycharmProjects/Ex0/quant_RGB.png",2)
-
-# imDisplay('/home/omerugi/PycharmProjects/Ex0/quant_GRAY_q4_it5.png',1)
-# imDisplay('/home/omerugi/PycharmProjects/Ex0/histEQ_RGB.png',2)
-
 
