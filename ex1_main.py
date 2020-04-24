@@ -1,5 +1,5 @@
-from ex1_utils import *
-from gamma import gammaDisplay
+from ex1 import *
+from gammarugi import gammaDisplay
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -47,13 +47,13 @@ def quantDemo(img_path: str, rep: int):
 
 def main():
     print("ID:", myID())
-    img_path = '/home/omerugi/PycharmProjects/Ex0/beach.jpg'
+    img_path = '/home/omerugi/PycharmProjects/Ex0/WhenYouFindAbug.jpg'
 
-    # Basic read and display
+    # # Basic read and display
     # imDisplay(img_path, LOAD_GRAY_SCALE)
     # imDisplay(img_path, LOAD_RGB)
-    #
-    # # Convert Color spaces
+
+    # Convert Color spaces
     # img = imReadAndConvert(img_path, LOAD_RGB)
     # yiq_img = transformRGB2YIQ(img)
     # f, ax = plt.subplots(1, 2)
@@ -61,16 +61,16 @@ def main():
     # ax[1].imshow(yiq_img)
     # plt.show()
 
-    # Image histEq
+    ##Image histEq
     # histEqDemo(img_path, LOAD_GRAY_SCALE)
     # histEqDemo(img_path, LOAD_RGB)
-    #
-    # # Image Quantization
+
+    # Image Quantization
     #quantDemo(img_path, LOAD_GRAY_SCALE)
     quantDemo(img_path, LOAD_RGB)
-
-    # Gamma
-   # gammaDisplay(img_path, LOAD_GRAY_SCALE)
+    #
+    # # Gamma
+    # gammaDisplay(img_path, LOAD_GRAY_SCALE)
 
 if __name__ == '__main__':
     main()

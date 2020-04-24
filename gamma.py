@@ -18,7 +18,7 @@ LOAD_RGB = 2
 
 
 def gamma(x):
-    print(x / 100)
+    return
 
 
 def gammaDisplay(img_path: str, rep: int):
@@ -44,6 +44,7 @@ def gammaDisplay(img_path: str, rep: int):
         if k == 27:
             break
         g = cv2.getTrackbarPos('Gamma', 'Gamma correction')
+        print(g/100)
         newim = np.power(img, g/100)
 
     cv2.destroyAllWindows()
@@ -52,8 +53,7 @@ def gammaDisplay(img_path: str, rep: int):
 
 
 def main():
-    gammaDisplay('/home/omerugi/PycharmProjects/Ex0/bac_con.png', 2)
-
+    gammaDisplay('/home/omerugi/PycharmProjects/Ex0/beach.jpg', 2)
 
 
 if __name__ == '__main__':

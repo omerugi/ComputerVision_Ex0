@@ -1,4 +1,79 @@
 
+def init_hist_limits(img: np.ndarray, nQuant: int):
+    hist, bins = np.histogram(img.flatten(), 256)
+    z = np.arange(nQuant + 1)  # with 0 and 255
+
+    for i in range(0, len(z)):  # init
+        z[i] = round((i / nQuant) * len(hist))
+
+    return z, hist
+    pass
+
+
+def calc_wg_avg_limits(z: np.ndarray, hist: np.ndarray, nQuant: int) -> np.array:
+    q = np.arange(nQuant, dtype=np.float32)
+
+    index = np.arange(0, 256)
+    for i in range(0, nQuant):
+        q[i] = np.average(index[z[i]:z[i + 1] + 1], weights=hist[z[i]:z[i + 1] + 1])
+
+    for j in range(1, nQuant):
+        z[j] = (q[j - 1] + q[j]) / 2
+
+    return z, q
+    pass
+
+
+def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
+    """
+        Quantized an image in to **nQuant** colors
+        :param imOrig: The original image (RGB or Gray scale)
+        :param nQuant: Number of colors to quantize the image to
+        :param nIter: Number of optimization loops
+        :return: (List[qImage_i],List[error_i])
+    """
+
+    img_list = []
+    mse_list = []
+
+    if len(imOrig.shape) == 2:
+
+        img = imOrig * 255
+        z, hist = init_hist_limits(img, nQuant)
+
+        for k in range(0, nIter):
+
+            z, q = calc_wg_avg_limits(z, hist, nQuant)
+            newimg = img.copy()
+
+            for i in range(1, nQuant + 1):
+                newimg[(newimg >= z[i - 1]) & (newimg < z[i])] = q[i - 1]
+
+            img_list.append(newimg)
+            mse = pow(np.power(img - newimg, 2).sum(), 0.5) / img.size
+            mse_list.append(mse)
+
+
+    else:
+
+        img = transformRGB2YIQ(imOrig) * 255
+        z, hist = init_hist_limits(img[:, :, 0], nQuant)
+
+        for k in range(0, nIter):
+
+            z, q = calc_wg_avg_limits(z, hist, nQuant)
+            newimg = img.copy()
+            for i in range(1, nQuant + 1):
+                newimg[:, :, 0][(newimg[:, :, 0] > z[i - 1]) & (newimg[:, :, 0] < z[i])] = q[i - 1]
+
+            newimg = transformYIQ2RGB(newimg) / 255
+            img_list.append(newimg)
+            mse = pow(np.power(imOrig - newimg, 2).sum(), 0.5) / imOrig.size
+            mse_list.append(mse)
+
+    return img_list, mse_list
+
+    pass
 
 """
         '########:'##::::'##::::'##:::
