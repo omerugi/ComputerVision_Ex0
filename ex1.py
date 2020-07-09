@@ -145,7 +145,7 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
     else:
         img = transformRGB2YIQ(imgOrig)
         img[:, :, 0] = img[:, :, 0] * 255
-        img[:, :, 0], histOrig, histEq = hist_eq(img)
+        img[:, :, 0], histOrig, histEq = hist_eq(img[:, :, 0])
         img[:, :, 0] = img[:, :, 0] / 255
         imgEq = transformYIQ2RGB(img)
 
@@ -260,7 +260,7 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
             newimg=transformYIQ2RGB(newimg/ 255)
 
         imgs.append(newimg)
-        mse = pow(np.power(imOrig-newimg,2).sum(),0.5)/imOrig.size
+        mse = np.power(imOrig-newimg,2).sum()/imOrig.size
         mses.append(mse)
 
     return imgs, mses
